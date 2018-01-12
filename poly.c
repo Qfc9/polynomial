@@ -139,20 +139,55 @@ polynomial *poly_add(const polynomial *a, const polynomial *b)
     return c;
 }
 
+polynomial *poly_sub_onto(polynomial *newPoly, const polynomial *a)
+{
+    if(!a)
+    {
+        return NULL;
+    }
+    else if(!newPoly)
+    {
+        // ABCs
+        newPoly = term_create(a->coeff, a->exp);
+        poly_add_onto(newPoly, a->next);
+    }
+    else
+    {
+        polynomial *temp = newPoly;
+        while(newPoly)
+        {
+            if(newPoly->exp == a->exp)
+            {
+                newPoly->coeff = newPoly->coeff - a->coeff;
+                break;
+            }
+            else if(!newPoly->next)
+            {
+                polynomial *newerPoly = term_create(a->coeff, a->exp);
+                newPoly->next = newerPoly;
+                break;
+            }
+            newPoly = newPoly->next;   
+        }
 
+        poly_add_onto(temp, a->next);
+    }
 
-// polynomial *poly_sub(const polynomial *a, const polynomial *b)
-// {
-//     if(!a || !b)
-//     {
-//         return NULL;
-//     }
+    return newPoly;
+}
 
-//     polynomial *c = poly_add_onto(NULL, a);
-//     poly_sub_onto(c, b);
+polynomial *poly_sub(const polynomial *a, const polynomial *b)
+{
+    if(!a || !b)
+    {
+        return NULL;
+    }
 
-//     return c;
-// }
+    polynomial *c = poly_sub_onto(NULL, a);
+    poly_sub_onto(c, b);
+
+    return c;
+}
 
 // bool poly_equal(const polynomial *a, const polynomial *b)
 // {
