@@ -1,5 +1,6 @@
-CPPFLAGS += -Wall -Werror -Wextra -Wpedantic -Wwrite-strings -Wstack-usage=1024 -Wfloat-equal -Waggregate-return -Winline -I -D_XOPEN_SOURCE
+CPPFLAGS += -Wall -Wextra -Wpedantic -Wwrite-strings -Wstack-usage=1024 -Wfloat-equal -Waggregate-return -Winline -I -D_XOPEN_SOURCE
 CFLAGS += -std=c11 -lm
+ARFLAGS += -U
 
 DEBUG = -DDEBUG -g
 
@@ -7,25 +8,19 @@ BINS = driver
 
 FILES = driver.o poly.a
 
-all: build
-
-.PHONY: all
+all: $(BINS)
 
 poly.a: poly.a(poly.o)
 
-debug: CFLAGS += $(DEBUG)
-debug: $(FILES)
-    gcc -o $(BINS) $(FILES) $(CPPFLAGS) $(CFLAGS)
-    $(MAKE) clean
+.PHONY: all build poly.a
+
+debug: CPPFLAGS += -DDEBUG -g
+debug:  $(FILES)
+	gcc -o $(BINS) $(FILES) $(CPPFLAGS) $(CFLAGS)
+
 
 build: $(FILES)
-    gcc -o $(BINS) $(FILES) $(CPPFLAGS) $(CFLAGS)
-    $(MAKE) clean
-
-buildAll: debug
+	gcc -o $(BINS) $(FILES) $(CPPFLAGS) $(CFLAGS)
 
 clean:
-    $(RM) *.o *.a
-
-cleanAll:
-    $(RM) $(BINS) *.o *.a
+	$(RM) $(BINS) *.o *.a
