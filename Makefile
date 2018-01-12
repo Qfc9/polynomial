@@ -8,7 +8,7 @@ BINS = driver
 
 FILES = driver.o poly.a
 
-all: $(BINS)
+all: build
 
 poly.a: poly.a(poly.o)
 

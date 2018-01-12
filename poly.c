@@ -7,13 +7,6 @@
 
 int intToChar(int a);
 
-struct term
-{
-    int coeff;
-    unsigned int exp;
-    struct term *next;
-};
-
 typedef struct term polynomial;
 
 struct term * term_create(int coeff, unsigned int exp)
@@ -65,9 +58,11 @@ char *poly_to_string(const polynomial *p)
 {
     if(!p)
     {
-        return;
+        return NULL;
     }
 
+    // MAKE DYNAMIC
+    // TODO: ABCs
     char *theStr = malloc(sizeof(*theStr * 10));
     int counter = 0;
 
@@ -92,26 +87,75 @@ char *poly_to_string(const polynomial *p)
 
     return theStr;
 }
+
+polynomial *poly_add_onto(polynomial *newPoly, const polynomial *a)
+{
+    if(!a)
+    {
+        return NULL;
+    }
+    else if(!newPoly)
+    {
+        // ABCs
+        newPoly = term_create(a->coeff, a->exp);
+        poly_add_onto(newPoly, a->next);
+    }
+    else
+    {
+        bool notFound = true;
+        polynomial *temp = newPoly;
+        while(newPoly)
+        {
+            if(newPoly->exp == a->exp)
+            {
+                newPoly->exp = newPoly->exp + a->exp;
+                newPoly->coeff = newPoly->coeff + a->coeff;
+                notFound = false;
+            }
+            newPoly = newPoly->next;   
+        }
+
+        if(notFound)
+        {
+            polynomial *newerPoly = term_create(a->coeff, a->exp);
+            temp->next = newerPoly;
+        }
+
+        poly_add_onto(temp, a->next);
+    }
+
+    return newPoly;
+}
+
 polynomial *poly_add(const polynomial *a, const polynomial *b)
 {
-    return NULL;
-}
-polynomial *poly_sub(const polynomial *a, const polynomial *b)
-{
-    return NULL;
-}
-bool poly_equal(const polynomial *a, const polynomial *b)
-{
-    return true;
-}
-double poly_eval(const polynomial *p, double x)
-{
-    return 0.0;
-}
-void poly_iterate(polynomial *p, void(*transform)(struct term *))
-{
+    if(!a || !b)
+    {
+        return NULL;
+    }
 
+    polynomial *c = poly_add_onto(NULL, a);
+    poly_add_onto(c, b);
+
+    return c;
 }
+
+// polynomial *poly_sub(const polynomial *a, const polynomial *b)
+// {
+//     return NULL;
+// }
+// bool poly_equal(const polynomial *a, const polynomial *b)
+// {
+//     return true;
+// }
+// double poly_eval(const polynomial *p, double x)
+// {
+//     return 0.0;
+// }
+// void poly_iterate(polynomial *p, void (*transform)(struct term *))
+// {
+
+// }
 
 int intToChar(int a)
 {
