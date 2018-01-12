@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <math.h>
 
 #include "poly.h"
 
@@ -211,10 +212,25 @@ bool poly_equal(const polynomial *a, const polynomial *b)
     return false;
 
 }
-// double poly_eval(const polynomial *p, double x)
-// {
-//     return 0.0;
-// }
+
+double poly_eval(const polynomial *p, double x)
+{
+    if(!p)
+    {
+        return 0;
+    }
+
+    double result = pow(x, p->exp);
+    result = p->coeff * result;
+
+    if(p->next)
+    {
+        return result + poly_eval(p->next, x);
+    }
+
+    return result;
+}
+
 // void poly_iterate(polynomial *p, void (*transform)(struct term *))
 // {
 

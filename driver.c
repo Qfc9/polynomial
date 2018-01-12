@@ -15,16 +15,23 @@ int main(void)
     polynomial *a = term_create(4, 2);
     polynomial *b = term_create(5, 2);
 
-    poly_print(poly_add(a, b));
-    printf("\n");
-    poly_print(poly_add(eqn_a, eqn_b));
+    // poly_print(poly_add(a, b));
+    // printf("\n");
+    // poly_print(poly_add(eqn_a, eqn_b));
+    // printf("\n");
+
+    // poly_print(poly_add(poly_add(a, b), poly_add(eqn_a, eqn_b)));
+    // printf("\n");
+
+    // poly_print(poly_sub(poly_add(a, b), poly_add(eqn_a, eqn_b)));
+    // printf("\n");
+
+    poly_print(eqn_c);
     printf("\n");
 
-    poly_print(poly_add(poly_add(a, b), poly_add(eqn_a, eqn_b)));
-    printf("\n");
-
-    poly_print(poly_sub(poly_add(a, b), poly_add(eqn_a, eqn_b)));
-    printf("\n");
+    printf("%lf\n", poly_eval(eqn_a, 3));
+    printf("%lf\n", poly_eval(eqn_b, 3));
+    printf("%lf\n", poly_eval(eqn_c, 3));
 
     polynomial *test = poly_add(poly_add(a, b), poly_add(eqn_a, eqn_b));
 
