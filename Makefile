@@ -17,10 +17,15 @@ poly.a: poly.a(poly.o)
 debug: CPPFLAGS += -DDEBUG -g
 debug:  $(FILES)
 	gcc -o $(BINS) $(FILES) $(CPPFLAGS) $(CFLAGS)
+	$(MAKE) clean
 
 
 build: $(FILES)
 	gcc -o $(BINS) $(FILES) $(CPPFLAGS) $(CFLAGS)
+	$(MAKE) clean
 
 clean:
+	$(RM) *.o *.a
+
+cleanAll:
 	$(RM) $(BINS) *.o *.a

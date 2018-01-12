@@ -4,6 +4,9 @@
 
 #include "poly.h"
 
+
+int intToChar(int a);
+
 struct term
 {
     int coeff;
@@ -60,7 +63,34 @@ void poly_print(const polynomial *eqn)
 
 char *poly_to_string(const polynomial *p)
 {
-    return ' ';
+    if(!p)
+    {
+        return;
+    }
+
+    char *theStr = malloc(sizeof(*theStr * 10));
+    int counter = 0;
+
+    while(p)
+    {
+
+        theStr[counter++] = p->coeff > 0 ? '+' : '\0';
+        theStr[counter++] = intToChar(p->coeff);
+        if(p->exp > 1)
+        {
+            theStr[counter++] = 'x';
+            theStr[counter++] = '^';
+            theStr[counter++] = intToChar(p->exp);
+        }
+        else if(p->exp == 1)
+        {
+            theStr[counter++] = 'x';
+        }
+
+        p = p->next;
+    }
+
+    return theStr;
 }
 polynomial *poly_add(const polynomial *a, const polynomial *b)
 {
@@ -81,4 +111,9 @@ double poly_eval(const polynomial *p, double x)
 void poly_iterate(polynomial *p, void(*transform)(struct term *))
 {
 
+}
+
+int intToChar(int a)
+{
+    return a + 48;
 }
