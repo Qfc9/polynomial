@@ -189,10 +189,28 @@ polynomial *poly_sub(const polynomial *a, const polynomial *b)
     return c;
 }
 
-// bool poly_equal(const polynomial *a, const polynomial *b)
-// {
-//     return true;
-// }
+bool poly_equal(const polynomial *a, const polynomial *b)
+{
+    if((!a && b) || (a && !b))
+    {
+        return false;
+    }
+    else if(!a && !b)
+    {
+        return true;
+    }
+
+    if(a->exp == b->exp && a->coeff == b->coeff)
+    {
+        if(poly_equal(a->next, b->next))
+        {
+            return true;
+        }
+    }
+
+    return false;
+
+}
 // double poly_eval(const polynomial *p, double x)
 // {
 //     return 0.0;

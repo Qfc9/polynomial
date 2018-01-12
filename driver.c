@@ -26,6 +26,16 @@ int main(void)
     poly_print(poly_sub(poly_add(a, b), poly_add(eqn_a, eqn_b)));
     printf("\n");
 
+    polynomial *test = poly_add(poly_add(a, b), poly_add(eqn_a, eqn_b));
+
+    if(poly_equal(test, a))
+    {
+        printf("EQUAL\n");
+    }
+    else
+    {
+        printf("NOT\n");
+    }
 
     poly_destroy(eqn_a);
     poly_destroy(eqn_b);
