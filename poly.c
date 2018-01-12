@@ -159,7 +159,7 @@ polynomial *poly_sub_onto(polynomial *newPoly, const polynomial *a)
     {
         // ABCs
         newPoly = term_create(a->coeff, a->exp);
-        poly_add_onto(newPoly, a->next);
+        poly_sub_onto(newPoly, a->next);
     }
     else
     {
@@ -180,7 +180,7 @@ polynomial *poly_sub_onto(polynomial *newPoly, const polynomial *a)
             newPoly = newPoly->next;   
         }
 
-        poly_add_onto(temp, a->next);
+        poly_sub_onto(temp, a->next);
     }
 
     return newPoly;
@@ -240,10 +240,17 @@ double poly_eval(const polynomial *p, double x)
     return result;
 }
 
-// void poly_iterate(polynomial *p, void (*transform)(struct term *))
-// {
+void poly_iterate(polynomial *p, void (*transform)(struct term *))
+{
+    if(!p)
+    {
+        return 0;
+    }
 
-// }
+    transform(p);
+
+    poly_iterate(p->next)
+}
 
 int intToChar(int a)
 {
