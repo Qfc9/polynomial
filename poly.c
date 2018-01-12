@@ -8,6 +8,7 @@
 int intToChar(int a);
 
 typedef struct term polynomial;
+polynomial *poly_add_onto(polynomial *newPoly, const polynomial *a);
 
 struct term * term_create(int coeff, unsigned int exp)
 {
@@ -102,23 +103,21 @@ polynomial *poly_add_onto(polynomial *newPoly, const polynomial *a)
     }
     else
     {
-        bool notFound = true;
         polynomial *temp = newPoly;
         while(newPoly)
         {
             if(newPoly->exp == a->exp)
             {
-                newPoly->exp = newPoly->exp + a->exp;
                 newPoly->coeff = newPoly->coeff + a->coeff;
-                notFound = false;
+                break;
+            }
+            else if(!newPoly->next)
+            {
+                polynomial *newerPoly = term_create(a->coeff, a->exp);
+                newPoly->next = newerPoly;
+                break;
             }
             newPoly = newPoly->next;   
-        }
-
-        if(notFound)
-        {
-            polynomial *newerPoly = term_create(a->coeff, a->exp);
-            temp->next = newerPoly;
         }
 
         poly_add_onto(temp, a->next);
@@ -140,10 +139,21 @@ polynomial *poly_add(const polynomial *a, const polynomial *b)
     return c;
 }
 
+
+
 // polynomial *poly_sub(const polynomial *a, const polynomial *b)
 // {
-//     return NULL;
+//     if(!a || !b)
+//     {
+//         return NULL;
+//     }
+
+//     polynomial *c = poly_add_onto(NULL, a);
+//     poly_sub_onto(c, b);
+
+//     return c;
 // }
+
 // bool poly_equal(const polynomial *a, const polynomial *b)
 // {
 //     return true;
