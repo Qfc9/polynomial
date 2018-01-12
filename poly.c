@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <math.h>
+#include <string.h>
 
 #include "poly.h"
 
@@ -58,36 +59,44 @@ void poly_print(const polynomial *eqn)
 
 char *poly_to_string(const polynomial *p)
 {
+
     if(!p)
     {
         return NULL;
     }
 
-    // MAKE DYNAMIC
-    // TODO: ABCs
-    char *theStr = malloc(sizeof(*theStr * 10));
-    int counter = 0;
+    size_t length = 1;
+    char first[64];
+    char middle[64];
 
-    while(p)
+    if(p->coeff)
     {
-
-        theStr[counter++] = p->coeff > 0 ? '+' : '\0';
-        theStr[counter++] = intToChar(p->coeff);
+        length += sprintf(first, "%c%d", p->coeff > 0 ? '+' : '-', abs(p->coeff));
         if(p->exp > 1)
         {
-            theStr[counter++] = 'x';
-            theStr[counter++] = '^';
-            theStr[counter++] = intToChar(p->exp);
+            length += sprintf(middle, "x^%d", p->exp);
+            length += 3;
         }
         else if(p->exp == 1)
         {
-            theStr[counter++] = 'x';
+            length += sprintf(middle, "x");
+            length++;
         }
-
-        p = p->next;
     }
 
-    return theStr;
+    char *curStr = malloc(sizeof(*curStr) * length);
+    strcat(curStr, first);
+    strcat(curStr, middle);
+
+    if(p->next)
+    {
+        char *pastStr = poly_to_string(p->next);
+        char *tmp = realloc(curStr, sizeof(*curStr) * (strlen(pastStr) + length));
+        curStr = tmp;
+        strcat(curStr, pastStr);
+    }
+
+    return curStr;
 }
 
 polynomial *poly_add_onto(polynomial *newPoly, const polynomial *a)

@@ -26,12 +26,24 @@ int main(void)
     // poly_print(poly_sub(poly_add(a, b), poly_add(eqn_a, eqn_b)));
     // printf("\n");
 
-    poly_print(eqn_c);
+    printf("\n***\n");
+
+
+    char *strA = poly_to_string(eqn_a);
+    char *strB = poly_to_string(eqn_b);
+    char *strC = poly_to_string(eqn_c);
+    printf("%s\n", strA);
+    printf("%s\n", strB);
+    printf("%s\n", strC);
+
     printf("\n");
 
-    printf("%lf\n", poly_eval(eqn_a, 3));
-    printf("%lf\n", poly_eval(eqn_b, 3));
-    printf("%lf\n", poly_eval(eqn_c, 3));
+    poly_print(eqn_a);
+    printf("\n");
+    poly_print(eqn_b);
+    printf("\n");
+    poly_print(eqn_c);
+    printf("\n");
 
     polynomial *test = poly_add(poly_add(a, b), poly_add(eqn_a, eqn_b));
 
@@ -49,6 +61,10 @@ int main(void)
     poly_destroy(eqn_c);
     poly_destroy(a);
     poly_destroy(b);
+    poly_destroy(test);
+    free(strA);
+    free(strB);
+    free(strC);
 
     return 0;
 }
