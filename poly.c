@@ -105,6 +105,7 @@ char *poly_to_string(const polynomial *p)
                 curStr = tmp;
                 strcat(curStr, pastStr);
             }
+            free(pastStr);
         }
     }
 

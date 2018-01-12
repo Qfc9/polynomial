@@ -16,11 +16,11 @@ int main(int argc, char *argv[])
 	}
 
 	int coefficients[3];
-	for(int n = 0; n < 3; ++n) {
+	for(int n = 1; n < 4; ++n) {
 		char *err;
-		coefficients[n] = strtol(argv[1], &err, 10);
+		coefficients[n-1] = strtol(argv[n], &err, 10);
 		if(*err) {
-			fprintf(stderr, "Not a number: %s\n", argv[1]);
+			fprintf(stderr, "Not a number: %s\n", argv[n]);
 			return 1;
 		}
 	}
