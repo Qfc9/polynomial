@@ -6,7 +6,7 @@ DEBUG = -DDEBUG -g
 
 BINS = driver
 
-FILES = driver.o poly.o
+FILES = driver_req.o poly.o
 
 all: build
 

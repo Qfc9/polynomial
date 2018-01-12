@@ -66,8 +66,10 @@ char *poly_to_string(const polynomial *p)
     }
 
     size_t length = 1;
-    char first[64];
-    char middle[64];
+    char first[32];
+    char middle[32];
+    strncpy(first, "\0", 32);
+    strncpy(middle, "\0", 32);
 
     if(p->coeff)
     {
@@ -84,16 +86,26 @@ char *poly_to_string(const polynomial *p)
         }
     }
 
-    char *curStr = malloc(sizeof(*curStr) * length);
-    strcat(curStr, first);
-    strcat(curStr, middle);
+    char *curStr = malloc(sizeof(*curStr) * length + 1);
+    strcpy(curStr, "\0");
+    if(curStr)
+    {
+        strncat(curStr, first, strlen(first));
+        strncat(curStr, middle, strlen(middle));
+    }
 
     if(p->next)
     {
         char *pastStr = poly_to_string(p->next);
-        char *tmp = realloc(curStr, sizeof(*curStr) * (strlen(pastStr) + length));
-        curStr = tmp;
-        strcat(curStr, pastStr);
+        if(pastStr)
+        {
+            char *tmp = realloc(curStr, sizeof(*curStr) * (strlen(pastStr) + length));
+            if(tmp)
+            {
+                curStr = tmp;
+                strcat(curStr, pastStr);
+            }
+        }
     }
 
     return curStr;
@@ -244,12 +256,12 @@ void poly_iterate(polynomial *p, void (*transform)(struct term *))
 {
     if(!p)
     {
-        return 0;
+        return;
     }
 
     transform(p);
 
-    poly_iterate(p->next)
+    poly_iterate(p->next, transform);
 }
 
 int intToChar(int a)

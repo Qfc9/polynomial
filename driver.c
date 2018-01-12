@@ -15,35 +15,28 @@ int main(void)
     polynomial *a = term_create(4, 2);
     polynomial *b = term_create(5, 2);
 
-    // poly_print(poly_add(a, b));
-    // printf("\n");
-    // poly_print(poly_add(eqn_a, eqn_b));
-    // printf("\n");
+    polynomial *c = term_create(5, 3);
+
+    poly_print(poly_add(a, b));
+    printf("\n");
+    poly_print(poly_add(eqn_a, eqn_b));
+    printf("\n");
+
+    poly_print(poly_sub(poly_add(a, b),poly_add(eqn_a, eqn_b)));
+    printf("\n");
 
     // poly_print(poly_add(poly_add(a, b), poly_add(eqn_a, eqn_b)));
     // printf("\n");
 
     // poly_print(poly_sub(poly_add(a, b), poly_add(eqn_a, eqn_b)));
+    printf("\n");
+
+    // poly_print(eqn_a);
     // printf("\n");
-
-    printf("\n***\n");
-
-
-    char *strA = poly_to_string(eqn_a);
-    char *strB = poly_to_string(eqn_b);
-    char *strC = poly_to_string(eqn_c);
-    printf("%s\n", strA);
-    printf("%s\n", strB);
-    printf("%s\n", strC);
-
-    printf("\n");
-
-    poly_print(eqn_a);
-    printf("\n");
-    poly_print(eqn_b);
-    printf("\n");
-    poly_print(eqn_c);
-    printf("\n");
+    // poly_print(eqn_b);
+    // printf("\n");
+    // poly_print(eqn_c);
+    // printf("\n");
 
     polynomial *test = poly_add(poly_add(a, b), poly_add(eqn_a, eqn_b));
 
@@ -56,15 +49,15 @@ int main(void)
         printf("NOT\n");
     }
 
-    poly_destroy(eqn_a);
-    poly_destroy(eqn_b);
-    poly_destroy(eqn_c);
-    poly_destroy(a);
-    poly_destroy(b);
-    poly_destroy(test);
-    free(strA);
-    free(strB);
-    free(strC);
+    // poly_destroy(eqn_a);
+    // poly_destroy(eqn_b);
+    // poly_destroy(eqn_c);
+    // poly_destroy(a);
+    // poly_destroy(b);
+    // poly_destroy(test);
+    // free(strA);
+    // free(strB);
+    // free(strC);
 
     return 0;
 }
