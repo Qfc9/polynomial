@@ -10,8 +10,6 @@
 
 int intToChar(int a);
 char *subscript(unsigned int normalExp);
-
-typedef struct term polynomial;
 polynomial *poly_add_onto(polynomial *newPoly, const polynomial *a);
 
 struct term * term_create(int coeff, unsigned int exp)
