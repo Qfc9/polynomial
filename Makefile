@@ -1,16 +1,16 @@
 CPPFLAGS += -Wall -Wextra -Wpedantic -Wwrite-strings -Wstack-usage=1024 -Wfloat-equal -Waggregate-return -Winline -I -D_XOPEN_SOURCE
 CFLAGS += -std=c11 -lm
-ARFLAGS += -U -DDEBUG -g
+ARFLAGS += -U
 
 DEBUG = -DDEBUG -g
 
 BINS = driver
 
-FILES = driver_req.o poly.o
+FILES = driver_req.o poly.a
 
 all: build
 
-poly.a: poly.a(poly.o)
+poly.a: poly.a(poly.o) poly.a(util.o)
 
 .PHONY: all build poly.a debug
 
