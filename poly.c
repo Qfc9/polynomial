@@ -8,8 +8,9 @@
 #include "poly.h"
 #include "util.h"
 
-polynomial *poly_add_onto(polynomial *newPoly, const polynomial *a);
-polynomial *poly_sub_onto(polynomial *newPoly, const polynomial *a);
+enum sign{ADD, SUB};
+
+polynomial *poly_math(polynomial *newPoly, const polynomial *a, int sign);
 
 struct term * term_create(int coeff, unsigned int exp)
 {
@@ -178,61 +179,10 @@ polynomial *poly_add(const polynomial *a, const polynomial *b)
         return NULL;
     }
 
-    polynomial *c = poly_add_onto(NULL, a);
-    poly_add_onto(c, b);
+    polynomial *c = poly_math(NULL, a, ADD);
+    poly_math(c, b, ADD);
 
     return c;
-}
-
-polynomial *poly_sub_onto(polynomial *newPoly, const polynomial *a)
-{
-    if(!a)
-    {
-        return NULL;
-    }
-    else if(!newPoly)
-    {
-        // ABCs
-        newPoly = term_create(a->coeff, a->exp);
-        if(newPoly)
-        {
-            poly_sub_onto(newPoly, a->next);
-        }
-        else
-        {
-            return NULL;
-        }
-    }
-    else
-    {
-        polynomial *temp = newPoly;
-        while(newPoly)
-        {
-            if(newPoly->exp == a->exp)
-            {
-                newPoly->coeff = newPoly->coeff - a->coeff;
-                break;
-            }
-            else if(!newPoly->next)
-            {
-                polynomial *newerPoly = term_create(a->coeff, a->exp);
-                if(newerPoly)
-                {
-                    newPoly->next = newerPoly;
-                    break;
-                }
-                else
-                {
-                    return NULL;
-                }
-            }
-            newPoly = newPoly->next;   
-        }
-
-        poly_sub_onto(temp, a->next);
-    }
-
-    return newPoly;
 }
 
 polynomial *poly_sub(const polynomial *a, const polynomial *b)
@@ -242,8 +192,8 @@ polynomial *poly_sub(const polynomial *a, const polynomial *b)
         return NULL;
     }
 
-    polynomial *c = poly_sub_onto(NULL, a);
-    poly_sub_onto(c, b);
+    polynomial *c = poly_math(NULL, a, SUB);
+    poly_math(c, b, SUB);
 
     return c;
 }
@@ -299,4 +249,60 @@ void poly_iterate(polynomial *p, void (*transform)(struct term *))
     transform(p);
 
     poly_iterate(p->next, transform);
+}
+
+polynomial *poly_math(polynomial *newPoly, const polynomial *a, int sign)
+{
+    if(!a)
+    {
+        return NULL;
+    }
+    else if(!newPoly)
+    {
+        // ABCs
+        newPoly = term_create(a->coeff, a->exp);
+        if(newPoly)
+        {
+            poly_math(newPoly, a->next, sign);
+        }
+        else
+        {
+            return NULL;
+        }
+    }
+    else
+    {
+        polynomial *temp = newPoly;
+        while(newPoly)
+        {
+            if((newPoly->exp == a->exp) && (sign == ADD))
+            {
+                newPoly->coeff = newPoly->coeff + a->coeff;
+                break;
+            }
+            if((newPoly->exp == a->exp) && (sign == SUB))
+            {
+                newPoly->coeff = newPoly->coeff - a->coeff;
+                break;
+            }
+            else if(!newPoly->next)
+            {
+                polynomial *newerPoly = term_create(a->coeff, a->exp);
+                if(newerPoly)
+                {
+                    newPoly->next = newerPoly;
+                    break;
+                }
+                else
+                {
+                    return NULL;
+                }
+            }
+            newPoly = newPoly->next;   
+        }
+
+        poly_math(temp, a->next, sign);
+    }
+
+    return newPoly;
 }
