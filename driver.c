@@ -10,14 +10,15 @@ int main(void)
     polynomial *eqn_a = term_create(2, 2);
     polynomial *eqn_b = term_create(-10, 1);
 
-    polynomial *eqn_c = poly_add(eqn_a, eqn_b);
+    // polynomial *eqn_c = poly_add(eqn_a, eqn_b);
 
     polynomial *a = term_create(4, 2);
     polynomial *b = term_create(5, 2);
 
-    polynomial *c = term_create(5, 3);
+    // polynomial *c = term_create(5, 3);
 
-    poly_print(poly_add(a, b));
+    // poly_print(poly_add(a, b));
+    printf("%s", poly_to_string(poly_add(a, b)));
     printf("\n");
     poly_print(poly_add(eqn_a, eqn_b));
     printf("\n");
