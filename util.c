@@ -13,6 +13,7 @@ int intToChar(int a)
 char *subscript(unsigned int normalExp)
 {
     char *subExp = malloc(sizeof(*subExp) * 64);
+    strncpy(subExp, "\0", 64);
     strncpy(subExp, "x", 1);
     char strExp[64];
     sprintf(strExp, "%63u", normalExp);
