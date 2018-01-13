@@ -121,57 +121,6 @@ char *poly_to_string(const polynomial *p)
     return curStr;
 }
 
-polynomial *poly_add_onto(polynomial *newPoly, const polynomial *a)
-{
-    if(!a)
-    {
-        return NULL;
-    }
-    else if(!newPoly)
-    {
-        // ABCs
-        newPoly = term_create(a->coeff, a->exp);
-        if(newPoly)
-        {
-            poly_add_onto(newPoly, a->next);
-        }
-        else
-        {
-            return NULL;
-        }
-    }
-    else
-    {
-        polynomial *temp = newPoly;
-        while(newPoly)
-        {
-            if(newPoly->exp == a->exp)
-            {
-                newPoly->coeff = newPoly->coeff + a->coeff;
-                break;
-            }
-            else if(!newPoly->next)
-            {
-                polynomial *newerPoly = term_create(a->coeff, a->exp);
-                if(newerPoly)
-                {
-                    newPoly->next = newerPoly;
-                    break;
-                }
-                else
-                {
-                    return NULL;
-                }
-            }
-            newPoly = newPoly->next;   
-        }
-
-        poly_add_onto(temp, a->next);
-    }
-
-    return newPoly;
-}
-
 polynomial *poly_add(const polynomial *a, const polynomial *b)
 {
     if(!a || !b)
