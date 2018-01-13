@@ -9,7 +9,7 @@
 
 
 int intToChar(int a);
-void subscript(unsigned int normalExp);
+char *subscript(unsigned int normalExp);
 
 typedef struct term polynomial;
 polynomial *poly_add_onto(polynomial *newPoly, const polynomial *a);
@@ -48,8 +48,9 @@ void poly_print(const polynomial *eqn)
         printf("%c%d", eqn->coeff > 0 ? '+' : '\0', eqn->coeff);
         if(eqn->exp > 1)
         {
-            printf("x");
-            subscript(eqn->exp);
+            char *strExp = subscript(eqn->exp);
+            printf("%s", strExp);
+            free(strExp);
         }
         else if(eqn->exp == 1)
         {
@@ -78,8 +79,11 @@ char *poly_to_string(const polynomial *p)
         length += sprintf(first, "%c%d", p->coeff > 0 ? '+' : '-', abs(p->coeff));
         if(p->exp > 1)
         {
-            length += sprintf(middle, "x^%d", p->exp);
-            length += 3;
+            //length += sprintf(middle, "x^");
+            char *strExp = subscript(p->exp);
+            strcat(middle, strExp);
+            length += strlen(strExp);
+            free(strExp);
         }
         else if(p->exp == 1)
         {
@@ -272,8 +276,10 @@ int intToChar(int a)
     return a + 48;
 }
 
-void subscript(unsigned int normalExp)
+char *subscript(unsigned int normalExp)
 {
+    char *subExp = malloc(sizeof(*subExp) * 64);
+    strncpy(subExp, "x", 2);
     char strExp[64];
     sprintf(strExp, "%63u", normalExp);
 
@@ -282,7 +288,7 @@ void subscript(unsigned int normalExp)
         switch(strExp[i] - 48)
         {
             case 2:
-                printf("%s", u8"\u00B2");
+                strcat(subExp, "\u00B2");
                 break;
             case 3:
                 printf("%s", u8"\u00B3");
@@ -307,4 +313,6 @@ void subscript(unsigned int normalExp)
                 break;
         }
     }
+
+    return subExp;
 }
