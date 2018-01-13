@@ -7,8 +7,8 @@
 int main(void)
 {
     
-    polynomial *eqn_a = term_create(2, 2);
-    polynomial *eqn_b = term_create(-10, 1);
+    polynomial *eqn_a = term_create(2, 4);
+    polynomial *eqn_b = term_create(-10, 9);
 
     // polynomial *eqn_c = poly_add(eqn_a, eqn_b);
 
@@ -23,26 +23,26 @@ int main(void)
     printf("\n");
     poly_print(poly_add(a, b));
     printf("\n");
-    // printf("%s", poly_to_string(poly_add(a, b)));
-    // printf("\n");
-    // poly_print(poly_add(eqn_a, eqn_b));
-    // printf("\n");
+    printf("%s", poly_to_string(poly_add(a, b)));
+    printf("\n");
+    poly_print(poly_add(eqn_a, eqn_b));
+    printf("\n");
 
-    // poly_print(poly_sub(poly_add(a, b),poly_add(eqn_a, eqn_b)));
+    poly_print(poly_sub(poly_add(a, b),poly_add(eqn_a, eqn_b)));
+    printf("\n");
+
+    poly_print(poly_add(poly_add(a, b), poly_add(eqn_a, eqn_b)));
+    printf("\n");
+
+    poly_print(poly_sub(poly_add(a, b), poly_add(eqn_a, eqn_b)));
+    printf("\n");
+
+    // poly_print(eqn_a);
     // printf("\n");
-
-    // // poly_print(poly_add(poly_add(a, b), poly_add(eqn_a, eqn_b)));
-    // // printf("\n");
-
-    // // poly_print(poly_sub(poly_add(a, b), poly_add(eqn_a, eqn_b)));
+    // poly_print(eqn_b);
     // printf("\n");
-
-    // // poly_print(eqn_a);
-    // // printf("\n");
-    // // poly_print(eqn_b);
-    // // printf("\n");
-    // // poly_print(eqn_c);
-    // // printf("\n");
+    // poly_print(eqn_c);
+    // printf("\n");
 
     // polynomial *test = poly_add(poly_add(a, b), poly_add(eqn_a, eqn_b));
 

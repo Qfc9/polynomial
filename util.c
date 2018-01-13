@@ -13,7 +13,7 @@ int intToChar(int a)
 char *subscript(unsigned int normalExp)
 {
     char *subExp = malloc(sizeof(*subExp) * 64);
-    strncpy(subExp, "x", 2);
+    strncpy(subExp, "x", 1);
     char strExp[64];
     sprintf(strExp, "%63u", normalExp);
 
@@ -25,25 +25,25 @@ char *subscript(unsigned int normalExp)
                 strcat(subExp, "\u00B2");
                 break;
             case 3:
-                printf("%s", u8"\u00B3");
+                strcat(subExp, "\u00B3");
                 break;
             case 4:
-                printf("%s", u8"\u2074");
+                strcat(subExp, "\u2074");
                 break;
             case 5:
-                printf("%s", u8"\u2075");
+                strcat(subExp, "\u2075");
                 break;
             case 6:
-                printf("%s", u8"\u2076");
+                strcat(subExp, "\u2076");
                 break;
             case 7:
-                printf("%s", u8"\u2077");
+                strcat(subExp, "\u2077");
                 break;
             case 8:
-                printf("%s", u8"\u2078");
+                strcat(subExp, "\u2078");
                 break;
             case 9:
-                printf("%s", u8"\u2079");
+                strcat(subExp, "\u2079");
                 break;
         }
     }

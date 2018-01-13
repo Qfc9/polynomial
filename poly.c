@@ -12,6 +12,7 @@ enum sign{ADD, SUB};
 
 polynomial *poly_math(polynomial *newPoly, const polynomial *oldP, int sign);
 void poly_sort(polynomial *p);
+void poly_is_sorted(polynomial *p);
 
 struct term * term_create(int coeff, unsigned int exp)
 {
@@ -131,7 +132,7 @@ polynomial *poly_add(const polynomial *a, const polynomial *b)
 
     polynomial *c = poly_math(NULL, a, ADD);
     poly_math(c, b, ADD);
-    poly_sort(c);
+    poly_is_sorted(c);
 
     return c;
 }
@@ -145,7 +146,7 @@ polynomial *poly_sub(const polynomial *a, const polynomial *b)
 
     polynomial *c = poly_math(NULL, a, SUB);
     poly_math(c, b, SUB);
-    poly_sort(c);
+    poly_is_sorted(c);
 
     return c;
 }
@@ -258,25 +259,48 @@ polynomial *poly_math(polynomial *p, const polynomial *oldP, int sign)
     return p;
 }
 
-void poly_sort(polynomial *curP)
+void poly_sort(polynomial *p)
 {
-    if(!curP || !curP->next)
+    if(!p || !p->next)
     {
         return;
     }
 
-    if(curP->exp < curP->next->exp)
+    if(p->exp < p->next->exp)
     {
-        unsigned int tempExp = curP->exp;
-        int tempCoeff = curP->coeff;
+        unsigned int tempExp = p->exp;
+        int tempCoeff = p->coeff;
 
-        curP->exp = curP->next->exp;
-        curP->coeff = curP->next->coeff;
+        p->exp = p->next->exp;
+        p->coeff = p->next->coeff;
 
-        curP->next->exp = tempExp;
-        curP->next->coeff = tempCoeff;
+        p->next->exp = tempExp;
+        p->next->coeff = tempCoeff;
     }
     
 
-    poly_sort(curP->next);
+    poly_sort(p->next);
+
+}
+
+void poly_is_sorted(polynomial *p)
+{
+    if(!p || !p->next)
+    {
+        return;
+    }
+
+    polynomial *orgP = p;
+    size_t counter = 1;
+
+    while(p)
+    {
+        p = p->next;
+        counter++;
+    }
+
+    for(size_t i = 1; i < counter; i*=2)
+    {
+        poly_sort(orgP);
+    }
 }
