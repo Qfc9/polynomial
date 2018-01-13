@@ -49,8 +49,11 @@ void poly_print(const polynomial *eqn)
         if(eqn->exp > 1)
         {
             char *strExp = subscript(eqn->exp);
-            printf("%s", strExp);
-            free(strExp);
+            if(strExp)
+            {
+                printf("%s", strExp);
+                free(strExp);
+            }
         }
         else if(eqn->exp == 1)
         {
@@ -79,11 +82,13 @@ char *poly_to_string(const polynomial *p)
         length += sprintf(first, "%c%d", p->coeff > 0 ? '+' : '-', abs(p->coeff));
         if(p->exp > 1)
         {
-            //length += sprintf(middle, "x^");
             char *strExp = subscript(p->exp);
-            strcat(middle, strExp);
-            length += strlen(strExp);
-            free(strExp);
+            if(strExp)
+            {
+                strcat(middle, strExp);
+                length += strlen(strExp);
+                free(strExp);
+            }
         }
         else if(p->exp == 1)
         {
@@ -93,9 +98,9 @@ char *poly_to_string(const polynomial *p)
     }
 
     char *curStr = malloc(sizeof(*curStr) * length + 1);
-    strcpy(curStr, "\0");
     if(curStr)
     {
+        strcpy(curStr, "\0");
         strncat(curStr, first, strlen(first));
         strncat(curStr, middle, strlen(middle));
     }
@@ -128,7 +133,14 @@ polynomial *poly_add_onto(polynomial *newPoly, const polynomial *a)
     {
         // ABCs
         newPoly = term_create(a->coeff, a->exp);
-        poly_add_onto(newPoly, a->next);
+        if(newPoly)
+        {
+            poly_add_onto(newPoly, a->next);
+        }
+        else
+        {
+            return NULL;
+        }
     }
     else
     {
@@ -143,8 +155,15 @@ polynomial *poly_add_onto(polynomial *newPoly, const polynomial *a)
             else if(!newPoly->next)
             {
                 polynomial *newerPoly = term_create(a->coeff, a->exp);
-                newPoly->next = newerPoly;
-                break;
+                if(newerPoly)
+                {
+                    newPoly->next = newerPoly;
+                    break;
+                }
+                else
+                {
+                    return NULL;
+                }
             }
             newPoly = newPoly->next;   
         }
@@ -178,7 +197,14 @@ polynomial *poly_sub_onto(polynomial *newPoly, const polynomial *a)
     {
         // ABCs
         newPoly = term_create(a->coeff, a->exp);
-        poly_sub_onto(newPoly, a->next);
+        if(newPoly)
+        {
+            poly_sub_onto(newPoly, a->next);
+        }
+        else
+        {
+            return NULL;
+        }
     }
     else
     {
@@ -193,8 +219,15 @@ polynomial *poly_sub_onto(polynomial *newPoly, const polynomial *a)
             else if(!newPoly->next)
             {
                 polynomial *newerPoly = term_create(a->coeff, a->exp);
-                newPoly->next = newerPoly;
-                break;
+                if(newerPoly)
+                {
+                    newPoly->next = newerPoly;
+                    break;
+                }
+                else
+                {
+                    return NULL;
+                }
             }
             newPoly = newPoly->next;   
         }
