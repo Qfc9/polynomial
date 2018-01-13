@@ -1,0 +1,54 @@
+.\" Manpage for Polynomial Library.
+.\" Contact Elijah Harmon to correct errors or typos.
+.TH Polynomial Library 1 "13 January 2018" "1.0" "User Commands"
+.SH NAME
+Polynomial Library | poly.h
+.SH SYNOPSIS
+include "poly.h"
+.SH DESCRIPTION
+This library supplies the user with a list of functions he can use to perform math operations 
+on polynomials.
+
+.SH LIBRARY FUNCTIONS
+.TP
+.BR struct " " term " " * " " term_create(int " " coeff, " " unsigned " " int " " exp);
+Returns a poly from the passed in values
+
+.TP
+.BR void " " poly_destroy(polynomial " " *eqn);
+Will destroy a poly chain
+
+.TP
+.BR void " " poly_print(const polynomial " " *eqn);
+Will output a poly to STDOUT
+
+.TP
+.BR void " " poly_iterate(polynomial " " *p, " " void " " *transform)(struct " " term " " *));
+Allows you to pass a function and it will be ran on every poly in the chain
+
+.TP
+.BR polynomial " " *poly_add(const " " polynomial " " *a, " " const " " polynomial " " *b);
+Will add a poly to another poly, creating or adding to the chain
+
+.TP
+.BR polynomial " " *poly_sub(const " " polynomial " " *a, " " const " " polynomial " " *b);
+Will subtract a poly to another poly, subtract or adding to the chain
+
+.TP
+.BR bool " " poly_equal(const " " polynomial " " *a, " " const " " polynomial " " *b);
+Will return if poly a is equal to poly b
+
+.TP
+.BR double " " poly_eval(const " " polynomial " " *p, " " double " " x);
+Subsitues X in the polys and returns the end value after everything is calculated out
+
+.TP
+.BR char " " *poly_to_string(const " " polynomial " " *p);
+Will return the string values of the entire poly chain
+
+.SH SEE ALSO
+encode(1) 
+.SH BUGS
+No known bugs.
+.SH AUTHOR
+Elijah Harmon
