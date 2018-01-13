@@ -6,7 +6,7 @@ DEBUG = -DDEBUG -g
 
 BINS = driver
 
-FILES = driver_req.o poly.a
+FILES = driver.o poly.a
 
 all: poly.a
 
