@@ -8,7 +8,7 @@ BINS = driver
 
 FILES = driver_req.o poly.a
 
-all: build
+all: poly.a
 
 poly.a: poly.a(poly.o) poly.a(util.o)
 
