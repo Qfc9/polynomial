@@ -4,61 +4,102 @@
 
 #include "poly.h"
 
-int main(void)
+polynomial *build_parabola(int a, int b, int c);
+void square_each(struct term *t);
+void remove_evens(struct term *t);
+
+int main(int argc, char *argv[])
 {
-    
-    polynomial *eqn_a = term_create(2, 2);
-    polynomial *eqn_b = term_create(-10, 1);
+	if(argc != 4) {
+		fprintf(stderr, "Usage: %s A B C, for Ax^2 + Bx + C\n", argv[0]);
+		return 1;
+	}
 
-    // polynomial *eqn_c = poly_add(eqn_a, eqn_b);
+	int coefficients[3];
+	for(int n = 1; n < 4; ++n) {
+		char *err;
+		coefficients[n-1] = strtol(argv[n], &err, 10);
+		if(*err) {
+			fprintf(stderr, "Not a number: %s\n", argv[n]);
+			return 1;
+		}
+	}
 
-    polynomial *a = term_create(4, 2);
-    polynomial *b = term_create(5, 2);
+	polynomial *first = build_parabola(2, -10, 8);
+	char *str = poly_to_string(first);
+	polynomial *second = build_parabola(coefficients[0], coefficients[1], coefficients[2]);
 
-    // polynomial *c = term_create(5, 3);
+	poly_print(second);
+	puts("");
+	puts(str);
 
-    // poly_print(poly_add(a, b));
-    printf("%s", poly_to_string(poly_add(a, b)));
-    printf("\n");
-    poly_print(poly_add(eqn_a, eqn_b));
-    printf("\n");
+	polynomial *sum = poly_add(first, second);
+	poly_print(sum);
+	puts("");
+	poly_destroy(sum);
 
-    poly_print(poly_sub(poly_add(a, b),poly_add(eqn_a, eqn_b)));
-    printf("\n");
+	polynomial *diff = poly_sub(first, second);
+	poly_print(diff);
+	puts("");
+	poly_destroy(diff);
 
-    // poly_print(poly_add(poly_add(a, b), poly_add(eqn_a, eqn_b)));
-    // printf("\n");
+	if(poly_equal(first, second)) {
+		puts("Parabolas are equal");
+	} else {
+		puts("Parabolas are NOT equal");
+	}
 
-    // poly_print(poly_sub(poly_add(a, b), poly_add(eqn_a, eqn_b)));
-    printf("\n");
+	printf("f(7)    = %lf\n", poly_eval(second, 7.0));
+	printf("f(0)    = %lf\n", poly_eval(second, 0.0));
+	printf("f(-3.5) = %lf\n", poly_eval(second, -3.5));
 
-    // poly_print(eqn_a);
-    // printf("\n");
-    // poly_print(eqn_b);
-    // printf("\n");
-    // poly_print(eqn_c);
-    // printf("\n");
+	poly_iterate(second, remove_evens);
+	poly_print(second);
+	puts("");
 
-    polynomial *test = poly_add(poly_add(a, b), poly_add(eqn_a, eqn_b));
+	poly_iterate(second, square_each);
+	poly_print(second);
+	puts("");
 
-    if(poly_equal(test, a))
-    {
-        printf("EQUAL\n");
-    }
-    else
-    {
-        printf("NOT\n");
-    }
+	poly_destroy(first);
+	poly_destroy(second);
 
-    // poly_destroy(eqn_a);
-    // poly_destroy(eqn_b);
-    // poly_destroy(eqn_c);
-    // poly_destroy(a);
-    // poly_destroy(b);
-    // poly_destroy(test);
-    // free(strA);
-    // free(strB);
-    // free(strC);
+	polynomial *big = term_create(coefficients[0], coefficients[1] + coefficients[2]);
+	poly_print(big);
+	puts("");
+	poly_destroy(big);
 
-    return 0;
+	puts(str);
+
+	free(str);
+
+}
+
+polynomial *build_parabola(int a, int b, int c)
+{
+	polynomial *eqn_a = term_create(a, 2);
+	polynomial *eqn_b = term_create(b, 1);
+	polynomial *eqn_d = poly_add(eqn_b, eqn_a);
+
+	poly_destroy(eqn_a);
+	poly_destroy(eqn_b);
+
+	polynomial *eqn_c = term_create(c, 0);
+	polynomial *eqn_e = poly_add(eqn_c, eqn_d);
+	poly_destroy(eqn_c);
+	poly_destroy(eqn_d);
+
+	return eqn_e;
+}
+
+void square_each(struct term *t)
+{
+	t->exp *= 2;
+}
+
+void remove_evens(struct term *t)
+{
+	if(t->exp % 2 == 0) {
+		t->coeff = 0;
+	}
 }

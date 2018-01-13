@@ -1,3 +1,5 @@
+/*  poly.c  */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -6,12 +8,17 @@
 #include <uchar.h>
 
 #include "poly.h"
+#include "util.h"
 
+// Enum for doing Addition or subtractio
+enum sign{ADD, SUB};
 
-int intToChar(int a);
-char *subscript(unsigned int normalExp);
-polynomial *poly_add_onto(polynomial *newPoly, const polynomial *a);
+// Custom hidden function prototypes
+polynomial *poly_math(polynomial *newPoly, const polynomial *oldP, int sign);
+void poly_sort(polynomial *p);
+void poly_is_sorted(polynomial *p);
 
+// Term Struct form the starter code
 struct term * term_create(int coeff, unsigned int exp)
 {
     struct term *node = malloc(sizeof(*node));
@@ -24,6 +31,7 @@ struct term * term_create(int coeff, unsigned int exp)
     return node;
 }
 
+// Poly Destroy from the starter code
 void poly_destroy(polynomial *eqn)
 {
     while(eqn)
@@ -34,6 +42,7 @@ void poly_destroy(polynomial *eqn)
     }
 }
 
+// Poly Print form the starter code, MODIFIED
 void poly_print(const polynomial *eqn)
 {
     if(!eqn)
@@ -46,6 +55,8 @@ void poly_print(const polynomial *eqn)
         printf("%c%d", eqn->coeff > 0 ? '+' : '\0', eqn->coeff);
         if(eqn->exp > 1)
         {
+            // Modified this part
+            // Now prints a subscript unicode char
             char *strExp = subscript(eqn->exp);
             if(strExp)
             {
@@ -62,24 +73,32 @@ void poly_print(const polynomial *eqn)
     poly_print(eqn->next);
 }
 
+// Returns the poly as a string
 char *poly_to_string(const polynomial *p)
 {
+    // Checking if the poly exists
     if(!p)
     {
         return NULL;
     }
 
+    // Initializing Variables
     size_t length = 1;
     char first[32];
     char middle[32];
     strncpy(first, "\0", 32);
     strncpy(middle, "\0", 32);
 
+    // Making sure the coeff exists
     if(p->coeff)
     {
+        // Storing the sign and coeff and logging the length
         length += sprintf(first, "%c%d", p->coeff > 0 ? '+' : '-', abs(p->coeff));
+
+        // If there is an exponent do one of these ifs
         if(p->exp > 1)
         {
+            // Get's the unicode subscript and cat's it
             char *strExp = subscript(p->exp);
             if(strExp)
             {
@@ -88,6 +107,7 @@ char *poly_to_string(const polynomial *p)
                 free(strExp);
             }
         }
+        // If the exponent is ^1
         else if(p->exp == 1)
         {
             length += sprintf(middle, "x");
@@ -95,6 +115,7 @@ char *poly_to_string(const polynomial *p)
         }
     }
 
+    // Adds the collected strings to the return string
     char *curStr = malloc(sizeof(*curStr) * length + 1);
     if(curStr)
     {
@@ -103,14 +124,18 @@ char *poly_to_string(const polynomial *p)
         strncat(curStr, middle, strlen(middle));
     }
 
+    // Going to the next poly if it exists
     if(p->next)
     {
+        // Running the function against the next one and storing the return
         char *pastStr = poly_to_string(p->next);
         if(pastStr)
         {
+            // Reallocing the current string to fit the old one and the new one
             char *tmp = realloc(curStr, sizeof(*curStr) * (strlen(pastStr) + length));
             if(tmp)
             {
+                // Adding the new and old strings together
                 curStr = tmp;
                 strcat(curStr, pastStr);
             }
@@ -121,136 +146,44 @@ char *poly_to_string(const polynomial *p)
     return curStr;
 }
 
-polynomial *poly_add_onto(polynomial *newPoly, const polynomial *a)
-{
-    if(!a)
-    {
-        return NULL;
-    }
-    else if(!newPoly)
-    {
-        // ABCs
-        newPoly = term_create(a->coeff, a->exp);
-        if(newPoly)
-        {
-            poly_add_onto(newPoly, a->next);
-        }
-        else
-        {
-            return NULL;
-        }
-    }
-    else
-    {
-        polynomial *temp = newPoly;
-        while(newPoly)
-        {
-            if(newPoly->exp == a->exp)
-            {
-                newPoly->coeff = newPoly->coeff + a->coeff;
-                break;
-            }
-            else if(!newPoly->next)
-            {
-                polynomial *newerPoly = term_create(a->coeff, a->exp);
-                if(newerPoly)
-                {
-                    newPoly->next = newerPoly;
-                    break;
-                }
-                else
-                {
-                    return NULL;
-                }
-            }
-            newPoly = newPoly->next;   
-        }
-
-        poly_add_onto(temp, a->next);
-    }
-
-    return newPoly;
-}
-
+// Adding Polys together
 polynomial *poly_add(const polynomial *a, const polynomial *b)
 {
+    // Checking if they exist
     if(!a || !b)
     {
         return NULL;
     }
 
-    polynomial *c = poly_add_onto(NULL, a);
-    poly_add_onto(c, b);
+    // Adding the two together and then sorting them
+    polynomial *c = poly_math(NULL, a, ADD);
+    poly_math(c, b, ADD);
+    poly_is_sorted(c);
 
     return c;
 }
 
-polynomial *poly_sub_onto(polynomial *newPoly, const polynomial *a)
-{
-    if(!a)
-    {
-        return NULL;
-    }
-    else if(!newPoly)
-    {
-        // ABCs
-        newPoly = term_create(a->coeff, a->exp);
-        if(newPoly)
-        {
-            poly_sub_onto(newPoly, a->next);
-        }
-        else
-        {
-            return NULL;
-        }
-    }
-    else
-    {
-        polynomial *temp = newPoly;
-        while(newPoly)
-        {
-            if(newPoly->exp == a->exp)
-            {
-                newPoly->coeff = newPoly->coeff - a->coeff;
-                break;
-            }
-            else if(!newPoly->next)
-            {
-                polynomial *newerPoly = term_create(a->coeff, a->exp);
-                if(newerPoly)
-                {
-                    newPoly->next = newerPoly;
-                    break;
-                }
-                else
-                {
-                    return NULL;
-                }
-            }
-            newPoly = newPoly->next;   
-        }
-
-        poly_sub_onto(temp, a->next);
-    }
-
-    return newPoly;
-}
-
+// Subtracting the polys
 polynomial *poly_sub(const polynomial *a, const polynomial *b)
 {
+    // Checking if they exist
     if(!a || !b)
     {
         return NULL;
     }
 
-    polynomial *c = poly_sub_onto(NULL, a);
-    poly_sub_onto(c, b);
+    // Subtracting the two polys and then sorting them
+    polynomial *c = poly_math(NULL, a, SUB);
+    poly_math(c, b, SUB);
+    poly_is_sorted(c);
 
     return c;
 }
 
+// Checking the the new polys are equal
 bool poly_equal(const polynomial *a, const polynomial *b)
 {
+    // Checking if they exsist / are the same
     if((!a && b) || (a && !b))
     {
         return false;
@@ -260,6 +193,7 @@ bool poly_equal(const polynomial *a, const polynomial *b)
         return true;
     }
 
+    // If the values match, it will go to the next poly in the chain
     if(a->exp == b->exp && a->coeff == b->coeff)
     {
         if(poly_equal(a->next, b->next))
@@ -272,26 +206,34 @@ bool poly_equal(const polynomial *a, const polynomial *b)
 
 }
 
+// Subsitues X in the polys as the value given
 double poly_eval(const polynomial *p, double x)
 {
+    // Checking if poly exists
     if(!p)
     {
         return 0;
     }
 
+    // Raising X by the exp
     double result = pow(x, p->exp);
+    // Them multipling against the coeff
     result = p->coeff * result;
 
+    // Going to the next poly if it exists
     if(p->next)
     {
+        // Returning the past value plus the current one
         return result + poly_eval(p->next, x);
     }
 
     return result;
 }
 
+// Iterates through the entire poly chain and let's user run a funtion on everything
 void poly_iterate(polynomial *p, void (*transform)(struct term *))
 {
+    // Checking if poly exists
     if(!p)
     {
         return;
@@ -302,48 +244,125 @@ void poly_iterate(polynomial *p, void (*transform)(struct term *))
     poly_iterate(p->next, transform);
 }
 
-int intToChar(int a)
+// Adds or Subtracts polys
+polynomial *poly_math(polynomial *p, const polynomial *oldP, int sign)
 {
-    return a + 48;
-}
-
-char *subscript(unsigned int normalExp)
-{
-    char *subExp = malloc(sizeof(*subExp) * 64);
-    strncpy(subExp, "x", 2);
-    char strExp[64];
-    sprintf(strExp, "%63u", normalExp);
-
-    for(unsigned int i = 0; i < strlen(strExp); i++)
+    // Checking if poly to be added exists
+    if(!oldP)
     {
-        switch(strExp[i] - 48)
+        return NULL;
+    }
+    // If the poly to be added to doesn't exist make it
+    else if(!p)
+    {
+        p = term_create(oldP->coeff, oldP->exp);
+        // After making the new poly, run the function again with the next adding poly value
+        if(p)
         {
-            case 2:
-                strcat(subExp, "\u00B2");
-                break;
-            case 3:
-                printf("%s", u8"\u00B3");
-                break;
-            case 4:
-                printf("%s", u8"\u2074");
-                break;
-            case 5:
-                printf("%s", u8"\u2075");
-                break;
-            case 6:
-                printf("%s", u8"\u2076");
-                break;
-            case 7:
-                printf("%s", u8"\u2077");
-                break;
-            case 8:
-                printf("%s", u8"\u2078");
-                break;
-            case 9:
-                printf("%s", u8"\u2079");
-                break;
+            poly_math(p, oldP->next, sign);
+        }
+        else
+        {
+            return NULL;
         }
     }
+    // When the adding to poly exists
+    else
+    {
+        // Take a snapshot of the old one
+        polynomial *temp = p;
 
-    return subExp;
+        // Loop through the entire new poly
+        while(p)
+        {
+            // There is a match and addition
+            if((p->exp == oldP->exp) && (sign == ADD))
+            {
+                p->coeff = p->coeff + oldP->coeff;
+                break;
+            }
+            // There is a match and subtraction
+            else if((p->exp == oldP->exp) && (sign == SUB))
+            {
+                p->coeff = p->coeff - oldP->coeff;
+                break;
+            }
+            // If they aren't the same and it's the end of the poly chain
+            else if(!p->next)
+            {
+                // Make a new poly and add the values to it
+                polynomial *newPoly = term_create(oldP->coeff, oldP->exp);
+                if(newPoly)
+                {
+                    // Then add the new poly to the chain
+                    p->next = newPoly;
+                    break;
+                }
+                else
+                {
+                    return NULL;
+                }
+            }
+            p = p->next;   
+        }
+        poly_math(temp, oldP->next, sign);
+    }
+
+    return p;
+}
+
+// Sorting a poly chain
+void poly_sort(polynomial *p)
+{
+    // Checking if poly exists and the next poly exists
+    if(!p || !p->next)
+    {
+        return;
+    }
+
+    // If the first poly is less than the second one, swap them
+    if(p->exp < p->next->exp)
+    {
+        // I swap the values of the two polys
+        // Because I couldn't get the pointers to swap correctly
+        unsigned int tempExp = p->exp;
+        int tempCoeff = p->coeff;
+
+        p->exp = p->next->exp;
+        p->coeff = p->next->coeff;
+
+        p->next->exp = tempExp;
+        p->next->coeff = tempCoeff;
+    }
+    
+    // Going to the next value on the chain
+    poly_sort(p->next);
+
+}
+
+// Checking if a poly chain is sorted
+void poly_is_sorted(polynomial *p)
+{
+    // Checking if poly exists and the next poly exists
+    if(!p || !p->next)
+    {
+        return;
+    }
+
+    // Saving the origial position of the first poly
+    polynomial *orgP = p;
+    size_t counter = 1;
+
+    // Checking out long the poly chain is
+    while(p)
+    {
+        p = p->next;
+        counter++;
+    }
+
+    // Sorting the poly chain O(log(N)) times
+    for(size_t i = 1; i < counter; i*=2)
+    {
+        poly_sort(orgP);
+    }
 }
