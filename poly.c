@@ -10,7 +10,8 @@
 
 enum sign{ADD, SUB};
 
-polynomial *poly_math(polynomial *newPoly, const polynomial *a, int sign);
+polynomial *poly_math(polynomial *newPoly, const polynomial *oldP, int sign);
+void poly_sort(polynomial *p);
 
 struct term * term_create(int coeff, unsigned int exp)
 {
@@ -130,6 +131,7 @@ polynomial *poly_add(const polynomial *a, const polynomial *b)
 
     polynomial *c = poly_math(NULL, a, ADD);
     poly_math(c, b, ADD);
+    poly_sort(c);
 
     return c;
 }
@@ -143,6 +145,7 @@ polynomial *poly_sub(const polynomial *a, const polynomial *b)
 
     polynomial *c = poly_math(NULL, a, SUB);
     poly_math(c, b, SUB);
+    poly_sort(c);
 
     return c;
 }
@@ -200,19 +203,19 @@ void poly_iterate(polynomial *p, void (*transform)(struct term *))
     poly_iterate(p->next, transform);
 }
 
-polynomial *poly_math(polynomial *newPoly, const polynomial *a, int sign)
+polynomial *poly_math(polynomial *p, const polynomial *oldP, int sign)
 {
-    if(!a)
+    if(!oldP)
     {
         return NULL;
     }
-    else if(!newPoly)
+    else if(!p)
     {
         // ABCs
-        newPoly = term_create(a->coeff, a->exp);
-        if(newPoly)
+        p = term_create(oldP->coeff, oldP->exp);
+        if(p)
         {
-            poly_math(newPoly, a->next, sign);
+            poly_math(p, oldP->next, sign);
         }
         else
         {
@@ -221,25 +224,25 @@ polynomial *poly_math(polynomial *newPoly, const polynomial *a, int sign)
     }
     else
     {
-        polynomial *temp = newPoly;
-        while(newPoly)
+        polynomial *temp = p;
+        while(p)
         {
-            if((newPoly->exp == a->exp) && (sign == ADD))
+            if((p->exp == oldP->exp) && (sign == ADD))
             {
-                newPoly->coeff = newPoly->coeff + a->coeff;
+                p->coeff = p->coeff + oldP->coeff;
                 break;
             }
-            if((newPoly->exp == a->exp) && (sign == SUB))
+            if((p->exp == oldP->exp) && (sign == SUB))
             {
-                newPoly->coeff = newPoly->coeff - a->coeff;
+                p->coeff = p->coeff - oldP->coeff;
                 break;
             }
-            else if(!newPoly->next)
+            else if(!p->next)
             {
-                polynomial *newerPoly = term_create(a->coeff, a->exp);
-                if(newerPoly)
+                polynomial *newPoly = term_create(oldP->coeff, oldP->exp);
+                if(newPoly)
                 {
-                    newPoly->next = newerPoly;
+                    p->next = newPoly;
                     break;
                 }
                 else
@@ -247,11 +250,33 @@ polynomial *poly_math(polynomial *newPoly, const polynomial *a, int sign)
                     return NULL;
                 }
             }
-            newPoly = newPoly->next;   
+            p = p->next;   
         }
-
-        poly_math(temp, a->next, sign);
+        poly_math(temp, oldP->next, sign);
     }
 
-    return newPoly;
+    return p;
+}
+
+void poly_sort(polynomial *curP)
+{
+    if(!curP || !curP->next)
+    {
+        return;
+    }
+
+    if(curP->exp < curP->next->exp)
+    {
+        unsigned int tempExp = curP->exp;
+        int tempCoeff = curP->coeff;
+
+        curP->exp = curP->next->exp;
+        curP->coeff = curP->next->coeff;
+
+        curP->next->exp = tempExp;
+        curP->next->coeff = tempCoeff;
+    }
+    
+
+    poly_sort(curP->next);
 }

@@ -12,7 +12,7 @@ all: build
 
 poly.a: poly.a(poly.o) poly.a(util.o)
 
-.PHONY: all build poly.a debug
+.PHONY: all poly.a
 
 debug: CFLAGS += -DDEBUG -g
 debug: CPPFLAGS += -DDEBUG -g
